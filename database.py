@@ -2,6 +2,7 @@ import os
 import splite3
 
 def init_table(db_name='movies.db'):
+    """Create a database file and a table if it doesn't already exist"""
     # If the database already exists, quit
     if os.path.exists(db_name):
         return
@@ -25,6 +26,7 @@ def init_table(db_name='movies.db'):
     conn.close()
 
 def insert_new_movie(movie, db_name='movies.db'):
+    """Insert a new movie into the database"""
     # Extract all the data
     imdb_id = movie['imdbID']
     title = movie['Title']
@@ -42,6 +44,7 @@ def insert_new_movie(movie, db_name='movies.db'):
     c.close()
 
 def is_movie_already_checked(imdb_id, db_name='movies.db'):
+    """Check if a movie already exists in the database"""
     # Connect to the database
     conn = splite3.connect(db_name) 
     c = conn.cursor()
@@ -56,9 +59,12 @@ def is_movie_already_checked(imdb_id, db_name='movies.db'):
     return False
 
 def dict_factory(cursor, row):
+    """"Convertt SQLite3 row to a dictionary
+
+    Code referenced from the following URL:    
+    https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory
+    """
     d = {}
     for index, col in enumerate(cursor.description):
         d[col[0]] = row[index]
     return d
-
-
