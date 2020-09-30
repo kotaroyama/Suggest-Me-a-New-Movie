@@ -10,8 +10,8 @@ import database
 def generate_imdb_id():
     """Generate a random IMDb ID
 
-    Each movie has a unique IMDb ID, which consists of letters 'tt' followed
-    by 7 digits.
+    Each movie has a unique IMDb ID, which consists of letters 'tt' 
+    followed by 7 digits.
     """
     imdb_id_int = random.randint(0, 9999999)
     imdb_id_string = 'tt' + str(imdb_id_int).zfill(8)
@@ -20,25 +20,30 @@ def generate_imdb_id():
 def retrieve_movie():
     """Retrieve a movie using OMDb API
 
-    Using the API, get a movie from the OMDb API (http://www.omdbapi.com/)
-    based on the movie's IMDb ID.
+    Using the API, get a movie from the OMDb API
+    (http://www.omdbapi.com/) based on the movie's IMDb ID.
     """
     while True:
+        print("Getting recommendations...")
         imdb_id = generate_imdb_id()
         url = f'http://www.omdbapi.com/?apikey={credentials.OBDB_API}&i={imdb_id}'
         r = requests.get(url)
         r_json = json.loads(r.text)
-        if r_json['Response'] != 'False':
+        if r_json['Response'] == 'True':
+            print("Found!\n\n")
             break
+        else:
+            print('Next\n\n')
     return r_json
 
 def main():
+    database.init_table()
     movie = {}
     while True:
         movie = retrieve_movie()
         imdb_id = movie['imdbID']
         if database.is_movie_already_checked(imdb_id) is False:
-            database.insert_new_movie(r_json)
+            database.insert_new_movie(movie)
             break
 
 if __name__ == "__main__":

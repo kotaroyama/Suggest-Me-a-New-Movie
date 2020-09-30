@@ -1,5 +1,6 @@
 import os
-import splite3
+import sqlite3
+
 
 def init_table(db_name='movies.db'):
     """Create a database file and a table if it doesn't already exist"""
@@ -11,13 +12,11 @@ def init_table(db_name='movies.db'):
     os.mknod(db_name)
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    table_name = 'retrieved'
-    t = (table_name, )
 
     # Create table
-    c.excecute('''CREATE TABLE ? 
+    c.execute('''CREATE TABLE retrieved 
                     (imdb_id text, title text, year real, country text,
-                     language text)''', t)
+                     language text)''')
 
     # Save changes
     conn.commit()
@@ -34,26 +33,30 @@ def insert_new_movie(movie, db_name='movies.db'):
     country = movie['Country']
     language = movie['Language']
 
-    table_name = 'retrieved'
-    t = (table_name, imdb_id, title, year, country, language, )
+    t = (imdb_id, title, year, country, language, )
 
     # Database connection
-    conn = sqlite.connect(db_name)
+    conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    c.execute('INSERT INTO ? VALUES (?, ?, ?, ?, ?)', t)
+    c.execute('INSERT INTO retrieved VALUES (?, ?, ?, ?, ?)', t)
+
+    # Print the database
+    for row in c.execute(f"SELECT * FROM retrieved"):
+        print(row)
+
+    # Save and close the database
+    conn.commit()
     c.close()
 
 def is_movie_already_checked(imdb_id, db_name='movies.db'):
     """Check if a movie already exists in the database"""
     # Connect to the database
-    conn = splite3.connect(db_name) 
+    conn = sqlite3.connect(db_name) 
     c = conn.cursor()
-    table_name = 'retrieved'
-    t = (table_name, )
 
-    for row in c.execute('SELECT * FROM ?', t):
+    for row in c.execute('SELECT * FROM retrieved'):
         row_dict = dict_factory(c, row)
-        if (imdb_id is row_dict['imdb_id']):
+        if (imdb_id == row_dict['imdb_id']):
             return True
 
     return False
