@@ -20,10 +20,12 @@ MOVIE2_IMDB_ID = 'tt1596363' # The Big Short
 class RetrieveTestCase(unittest.TestCase):
 
     def test_movie_dict(self):
+        """ Check if movie object is dictionary"""
         movie = retrieve.retrieve_movie()
         self.assertIsInstance(movie, dict)
         
     def test_movie_none(self):
+        """ Check if movie object is not empty """
         movie = retrieve.retrieve_movie()
         self.assertIsNotNone(movie)
 
@@ -31,6 +33,7 @@ class RetrieveTestCase(unittest.TestCase):
 class DatabaseTestCase(unittest.TestCase):
     
     def test_insert_movie(self):
+        """ Insert new movie into the database and check if it exists """
         movie1 = retrieve_movie(MOVIE1_IMDB_ID)
         movie2 = retrieve_movie(MOVIE2_IMDB_ID)
         database.insert_new_movie(movie1, DB_NAME)
